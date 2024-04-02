@@ -40,3 +40,27 @@ CREATE TABLE IF NOT EXISTS Fornecimento (
     FOREIGN KEY (PRcod) REFERENCES Projeto(PRcod) -- Chave estrangeira referenciando projetos
 );
 
+-- alterações
+ALTER TABLE Fornecedor
+    RENAME COLUMN Fcodigo TO Fcod,
+    ADD COLUMN Fone VARCHAR(20),
+    ADD CONSTRAINT fk_Fornecedor_Cidade FOREIGN KEY (#Ccod) REFERENCES Cidade(Ccod);
+
+CREATE TABLE Cidade (
+    Ccod INT PRIMARY KEY,
+    Cnome VARCHAR(100),
+    uf CHAR(2)
+);
+
+ALTER TABLE Peca
+    RENAME COLUMN Pcodigo TO Pcod,
+    ADD CONSTRAINT fk_Peca_Cidade FOREIGN KEY (#Ccod) REFERENCES Cidade(Ccod);
+
+ALTER TABLE Projeto
+    RENAME COLUMN PRcodigo TO PRcod,
+    ADD CONSTRAINT fk_Projeto_Cidade FOREIGN KEY (#Ccod) REFERENCES Cidade(Ccod);
+
+ALTER TABLE Fornecimento
+    ADD CONSTRAINT fk_Fornecimento_Fornecedor FOREIGN KEY (#Fcod) REFERENCES Fornecedor(Fcod),
+    ADD CONSTRAINT fk_Fornecimento_Peca FOREIGN KEY (#Pcod) REFERENCES Peca(Pcod),
+    ADD CONSTRAINT fk_Fornecimento_Projeto FOREIGN KEY (#PRcod) REFERENCES Projeto(PRcod);
