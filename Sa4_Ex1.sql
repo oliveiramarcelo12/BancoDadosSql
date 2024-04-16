@@ -63,5 +63,5 @@ FROM
 JOIN 
     Clientes c ON p.ID_Cliente = c.ID
 WHERE 
-    p.Data_Pedido >= CURRENT_DATE - INTERVAL '30 days';
+    p.Data_Pedido >= CURRENT_DATE - 30
 

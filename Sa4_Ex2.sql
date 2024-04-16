@@ -180,7 +180,7 @@ ORDER BY Status, Data_Pedido;
 -- Atualizar o status de todos os pedidos com mais de 30 dias para "Atrasado"
 UPDATE Pedidos
 SET Status = 'Atrasado'
-WHERE Data_Pedido < CURRENT_DATE - INTERVAL '30 days';
+WHERE Data_Pedido < CURRENT_DATE -  30;
 
 -- Calcular o total de vendas por categoria de produto
 SELECT c.Nome AS Categoria, SUM(p.Total) AS Total_Vendas
