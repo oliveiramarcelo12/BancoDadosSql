@@ -1,9 +1,14 @@
 <?php
 include 'functions.php';
+
 ?>
-<?=temmplate_header('Pizzaria MM')?>
+
+<?=template_header('Pizzaria Dom Bruno')?>
+
 <div class="content">
-    <h2>Ínicio</h2>
-    <p>Seja Bem-vindo</p>
+	<h2>Inicio</h2>
+	<p>Seja Bem-Vindo!</p>
 </div>
-<?template_footer()?>
+
+<?=template_footer()?>
+
