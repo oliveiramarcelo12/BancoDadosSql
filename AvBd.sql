@@ -56,6 +56,31 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     data_contratacao DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS supervisores_funcionarios (
+    id_funcionario INT NOT NULL,
+    id_supervisor INT NOT NULL,
+    PRIMARY KEY (id_funcionario, id_supervisor),
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios(id_funcionario),
+    FOREIGN KEY (id_supervisor) REFERENCES funcionarios(id_funcionario)
+);
+
+
+CREATE TABLE IF NOT EXISTS promocoes (
+    id_promocao SERIAL PRIMARY KEY,
+    nome_promocao VARCHAR(255) NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    desconto DECIMAL(10, 2) NOT NULL,
+    data_inicio DATE NOT NULL,
+    data_fim DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS horario_funcionamento (
+    id_horario SERIAL PRIMARY KEY,
+    dia_semana VARCHAR(20) NOT NULL,
+    hora_abertura TIME NOT NULL,
+    hora_fechamento TIME NOT NULL
+);
+
 DROP TABLE IF EXISTS contatos;
 
 INSERT INTO contatos (id_contato, nome, email, cell, pizza, cadastro) VALUES
@@ -150,6 +175,41 @@ SET situacao = CASE
 END;
 
 
+INSERT INTO supervisores_funcionarios (id_funcionario, id_supervisor)
+VALUES 
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'Marcos'), 4),
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'Patrícia'), 4),
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'Renata'), 4),
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'José'), 4),
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'Luiz'), 4),
+    ((SELECT id_funcionario FROM funcionarios WHERE nome = 'Ana'), 4);
+
+
+
+INSERT INTO promocoes (nome_promocao, descricao, desconto, data_inicio, data_fim)
+VALUES 
+    ('Desconto de Verão', 'Desconto de 20% para pizzas de verão', 20.00, '2024-06-01', '2024-09-01'),
+    ('Oferta Especial', 'Desconto de 15% em pizzas grandes', 15.00, '2024-05-01', '2024-05-31'),
+    ('Promoção de Inverno', 'Desconto de 25% para pizzas de inverno', 25.00, '2024-11-01', '2025-02-28');
+
+INSERT INTO horario_funcionamento (dia_semana, hora_abertura, hora_fechamento)
+VALUES 
+    ('Segunda-feira', '18:00:00', '23:00:00'),
+    ('Terça-feira', '18:00:00', '23:00:00'),
+    ('Quarta-feira', '18:00:00', '23:00:00'),
+    ('Quinta-feira', '18:00:00', '23:00:00'),
+    ('Sexta-feira', '18:00:00', '23:00:00'),
+    ('Sábado', '18:00:00', '23:00:00'),
+    ('Domingo', '17:00:00', '22:00:00');
+
+ALTER TABLE pizzas
+ADD COLUMN id_promocao INT,
+ADD FOREIGN KEY (id_promocao) REFERENCES promocoes(id_promocao);
+
+UPDATE pizzas
+SET id_promocao = 1
+WHERE nome = 'Pizza Especial';
+
 -- 1. Listar todos os pedidos com detalhes do cliente. Consulta para obter informações sobre os pedidos e os clientes que os fizeram.
 
 SELECT 
@@ -230,3 +290,102 @@ FROM
 INNER JOIN 
     entregas ON pedido.id_entregas = entregas.ID_ENTREGAS;
 
+-- 8. Listar todos os funcionários com seus respectivos supervisores. Consulta para exibir os funcionários e seus supervisores.
+SELECT 
+    f1.nome AS funcionario,
+    f2.nome AS supervisor
+FROM 
+    supervisores_funcionarios sf
+JOIN 
+    funcionarios f1 ON sf.id_funcionario = f1.id_funcionario
+JOIN 
+    funcionarios f2 ON sf.id_supervisor = f2.id_funcionario;
+
+-- 9. Listar todos os itens de pedidos com seus respectivos tamanhos. Consulta para mostrar os itens de pedidos e os tamanhos das pizzas associadas a eles.
+SELECT 
+    pedido.id_pedido,
+    pizzas.nome AS nome_pizza,
+    pizzas.tamanho
+FROM 
+    pedido
+INNER JOIN 
+    pizzas ON pedido.id_pizza = pizzas.id_pizza;
+
+-- 10. Listar todas as pizzas com suas respectivas promoções. Consulta para mostrar todas as pizzas e suas promoções.
+SELECT 
+    p.nome AS nome_pizza,
+    p.preco,
+    COALESCE(pr.nome_promocao, 'Sem promoção') AS promocao
+FROM 
+    pizzas p
+LEFT JOIN 
+    promocoes pr ON p.id_promocao = pr.id_promocao;
+
+-- 2 parte
+
+-- 1. Listar todos os clientes cadastrados. Consulta para recuperar todos os clientes que já fizeram pedidos na pizzaria.
+
+SELECT DISTINCT
+    c.nome AS nome_cliente,
+    c.email,
+    c.cell
+FROM 
+    contatos c
+INNER JOIN 
+    pedido p ON c.id_contato = p.id_contato;
+
+
+-- 2. Listar todos os pedidos realizados em um determinado período. Consulta para visualizar todos os pedidos feitos dentro de um intervalo de datas específico.
+SELECT *
+FROM pedido
+WHERE data_pedido BETWEEN '2024-01-01' AND '2024-12-31';
+
+-- 3. Listar os itens de um pedido específico. Consulta para ver todos os itens (pizzas,bebidas, etc.) em um pedido específico.
+SELECT p.nome AS item_pedido, p.preco
+FROM pedido pd
+JOIN pizzas p ON pd.id_pizza = p.id_pizza
+WHERE pd.id_pedido = 5;
+
+-- 4. Calcular o total gasto por um cliente. Consulta para somar o valor de todos os pedidos feitos por um cliente específico.
+SELECT c.nome AS cliente, SUM(p.preco) AS total_gasto
+FROM contatos c
+JOIN pedido pd ON c.id_contato = pd.id_contato
+JOIN pizzas p ON pd.id_pizza = p.id_pizza
+GROUP BY c.nome;
+
+-- 5. Listar os sabores de pizza mais populares. Consulta para mostrar os sabores de pizza mais pedidos pelos clientes.
+SELECT 
+    id_pizza,
+    COUNT(*) AS total_pedidos
+FROM 
+    pedido
+GROUP BY 
+    id_pizza
+ORDER BY 
+    total_pedidos DESC;
+
+
+-- 6. Verificar a disponibilidade de um determinado sabor de pizza. Consulta para verificar se um sabor específico de pizza está disponível no momento.
+SELECT 
+    *
+FROM 
+    pizzas
+WHERE 
+    nome = 'Calabresa';
+
+
+-- 7. Listar todos os funcionários. Consulta para recuperar informações de todos os funcionários da pizzaria.
+SELECT *
+FROM funcionarios;
+
+-- 8. Verificar o horário de funcionamento da pizzaria. Consulta para saber os horários de abertura e fechamento da pizzaria.
+SELECT *
+FROM horario_funcionamento;
+
+
+-- 9. Listar os pedidos em andamento. Consulta para ver todos os pedidos que ainda não foram entregues.
+SELECT *
+FROM entregas
+WHERE situacao= 'Não Entregue';
+
+-- 10. Calcular o tempo médio de espera dos pedidos. Consulta para calcular o tempo médio que os clientes esperam pelos pedidos.
