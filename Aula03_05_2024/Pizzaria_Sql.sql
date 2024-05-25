@@ -1,4 +1,4 @@
--- Geração de Modelo físico
+-- Geraï¿½ï¿½o de Modelo fï¿½sico
 -- Sql ANSI 2003 - brModelo.
 
 
