@@ -389,3 +389,6 @@ FROM entregas
 WHERE situacao= 'Não Entregue';
 
 -- 10. Calcular o tempo médio de espera dos pedidos. Consulta para calcular o tempo médio que os clientes esperam pelos pedidos.
+SELECT AVG(EXTRACT(EPOCH FROM (hora_entrega - hora_pedido))) AS tempo_medio_espera
+FROM pedido
+WHERE status_entrega = 'Finalizado'; -- Selecione apenas pedidos finalizados
