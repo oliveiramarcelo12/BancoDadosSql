@@ -123,7 +123,7 @@ VALUES
 INSERT INTO entregas (id_entregas,NOME, EMAIL, CEL, PIZZA, ENTREGA)
 VALUES 
     (1,'Cristiano Ronaldo', 'cristiano@example.com', '111111111', 'Calabresa', 'Finalizada'),
-    (2,'Kevin d Bruyne', 'kevin@example.com', '222222222', 'Margherita', 'Em Andamento'),
+    (2,'Kevin de Bruyne', 'kevin@example.com', '222222222', 'Margherita', 'Em Andamento'),
     (3,'Pelé Arantes', 'pele@example.com', '333333333', 'Quatro Queijos', 'Finalizada'),
     (4,'Wayne Rooney', 'wayne@example.com', '444444444', 'Pepperoni', 'Finalizada'),
     (5,'David Beckham', 'david@example.com', '555555555', 'Frango com Catupiry', 'Em Andamento'),
@@ -392,3 +392,49 @@ WHERE situacao= 'Não Entregue';
 SELECT AVG(EXTRACT(EPOCH FROM (hora_entrega - hora_pedido))) AS tempo_medio_espera
 FROM pedido
 WHERE status_entrega = 'Finalizado'; -- Selecione apenas pedidos finalizados
+-- Criar a tabela de associações entre pizzas e promoções
+CREATE TABLE IF NOT EXISTS pizza_promocoes (
+    id_pizza INT NOT NULL,
+    id_promocao INT NOT NULL,
+    PRIMARY KEY (id_pizza, id_promocao),
+    CONSTRAINT fk_id_pizza FOREIGN KEY (id_pizza) REFERENCES pizzas (id_pizza),
+    CONSTRAINT fk_id_promocao FOREIGN KEY (id_promocao) REFERENCES promocoes (id_promocao)
+);
+
+-- Inserir associações de promoções para as pizzas
+INSERT INTO pizza_promocoes (id_pizza, id_promocao) VALUES
+(1, 1), -- Pizza 1 (Calabresa) com Promoção 1 (Desconto de Verão)
+(2, 1), -- Pizza 2 (Margherita) com Promoção 1 (Desconto de Verão)
+(3, 2), -- Pizza 3 (Pepperoni) com Promoção 2 (Oferta Especial)
+(4, 2), -- Pizza 4 (Frango com Catupiry) com Promoção 2 (Oferta Especial)
+(5, 3), -- Pizza 5 (Quatro Queijos) com Promoção 3 (Promoção de Inverno)
+(6, 3), -- Pizza 6 (Portuguesa) com Promoção 3 (Promoção de Inverno)
+(7, 1), -- Pizza 7 (Bacon) com Promoção 1 (Desconto de Verão)
+(8, 2), -- Pizza 8 (Vegetariana) com Promoção 2 (Oferta Especial)
+(9, 3), -- Pizza 9 (Calabresa) com Promoção 3 (Promoção de Inverno)
+(10, 3); -- Pizza 10 (Margherita) com Promoção 3 (Promoção de Inverno)
+
+-- Inserir dados de exemplo na tabela de pizzas
+INSERT INTO pizzas (nome, preco, ingredientes) VALUES
+('Calabresa', 25.00, 'Calabresa, queijo, cebola, orégano'),
+('Margherita', 22.00, 'Tomate, queijo, manjericão'),
+('Pepperoni', 27.00, 'Pepperoni, queijo, molho de tomate'),
+('Frango com Catupiry', 30.00, 'Frango, catupiry, milho, ervilha'),
+('Quatro Queijos', 28.00, 'Mussarela, gorgonzola, parmesão, provolone'),
+('Portuguesa', 26.00, 'Presunto, ovo, cebola, azeitona, ervilha'),
+('Bacon', 29.00, 'Bacon, queijo, cebola, molho de tomate'),
+('Vegetariana', 24.00, 'Brócolis, milho, ervilha, tomate, cebola'),
+('Calabresa Especial', 31.00, 'Calabresa, queijo, cebola, orégano, pimenta'),
+('Margherita Gourmet', 33.00, 'Tomate, queijo, manjericão, azeite trufado');
+
+INSERT INTO entregas (id_entregas, nome, email, cel, pizza, cadastro, situacao) VALUES
+(1, 'João Silva', 'joao@example.com', '(11) 98765-4321', 'Calabresa', '2024-05-24', 'cancelada'),
+(2, 'Maria Santos', 'maria@example.com', '(11) 91234-5678', 'Margherita', '2024-05-24', 'entregue'),
+(3, 'Carlos Oliveira', 'carlos@example.com', '(11) 92345-6789', 'Pepperoni', '2024-05-24', 'andamento'),
+(4, 'Ana Ferreira', 'ana@example.com', '(11) 93456-7890', 'Frango com Catupiry', '2024-05-24', 'entregue'),
+(5, 'Paula Costa', 'paula@example.com', '(11) 94567-8901', 'Quatro Queijos', '2024-05-24', 'entregue'),
+(6, 'Pedro Ramos', 'pedro@example.com', '(11) 95678-9012', 'Portuguesa', '2024-05-24', 'cancelada'),
+(7, 'Mariana Oliveira', 'mariana@example.com', '(11) 96789-0123', 'Bacon', '2024-05-24', 'andamento'),
+(8, 'Fernando Silva', 'fernando@example.com', '(11) 97890-1234', 'Vegetariana', '2024-05-24', 'entregue'),
+(9, 'Patrícia Almeida', 'patricia@example.com', '(11) 98901-2345', 'Calabresa', '2024-05-24', 'cancelada'),
+(10, 'Lucas Santos', 'lucas@example.com', '(11) 99012-3456', 'Margherita', '2024-05-24', 'entregue');
