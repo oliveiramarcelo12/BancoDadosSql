@@ -61,13 +61,15 @@ echo <<<EOT
 	<body>
     <nav class="navtop">
     	<div>
-    		<h1> Pizzaria Dom Zeca </h1>
+    		<h1> Pizzaria Marcelo</h1>
             <a href="index.php"><i class="fas fa-home"></i>Inicio</a>
     		<a href="read.php"><i class="fas fa-shopping-basket"></i>Pedidos</a>
             <a href="ler_entregas.php"><i class="fa-solid fa-motorcycle"></i>Entregas</a>
             <a href="promocoes.php"><i class="fa-solid fa-motorcycle"></i>Promoções</a>
+             <a href="adicionar_pizza.php"><i class="fas fa-pizza-slice"></i>Pizza</a>
             <a href="pesquisar.php"><i class="fa-solid fa-magnifying-glass"></i>Pesquisar</a>
             <a href="processar_pedido.php"><i class="fa-solid fa-cart-shopping"></i>Comprar</a>
+            
     	</div>
     </nav>
 EOT;
